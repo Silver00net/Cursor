@@ -1,0 +1,101 @@
+<div id="weather" tabindex="0" aria-live="polite"></div>
+<script>
+    const API_KEY = "A9P886A459EDF4PKBQFSACZMY";
+    const LAT = 55.75222;
+    const LON = 37.61556;
+    // Функция создания карточки погоды
+    function createWeatherCard({ dateStr, icon, temp, desc, precip, humidity, isToday, isCurrent, timeStr }) {
+        const cardElement = document.createElement('div');
+        cardElement.className = `card fade-in${isToday ? ' today' : ''}`;
+        let dateHtml = isCurrent ? `Сейчас (${timeStr})` : dateStr;
+        // Определяем класс анимации для иконки
+        let iconClass = '';
+        if (icon.includes('cloud')) iconClass = 'cloud-animated';
+        if (icon.includes('clear-day')) iconClass = 'sun-animated';
+        cardElement.innerHTML = `
+            <div class="date">${dateHtml}</div>
+            <div style="position:relative;display:flex;justify-content:center;align-items:center;">
+                <img class="weather-icon ${iconClass}" src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${icon}.png" alt="${desc}" />
+            </div>
+            <div class="temp">${Math.round(temp)}°C</div>
+            <div class="desc">${desc}</div>
+            <div class="small-info">Осадки: ${precip} мм</div>
+            ${humidity !== undefined ? `<div class="small-info">Влажность: ${humidity}%</div>` : ''}
+        `;
+        // Добавляем SVG-оверлей поверх иконки
+        setTimeout(() => addWeatherOverlay(cardElement, icon), 0);
+        return cardElement;
+    }
+    async function getWeather() {
+        const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${LAT},${LON}/next4days?unitGroup=metric&key=${API_KEY}&contentType=json`;
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            const container = document.getElementById("weather");
+            container.innerHTML = "";
+            const days = data.days;
+            const todayStr = new Date().toISOString().split("T")[0];
+            days.forEach(day => {
+                const date = new Date(day.datetime);
+                const isToday = day.datetime === todayStr;
+                const weekday = date.toLocaleDateString("ru-RU", { 
+                    weekday: 'long', 
+                    day: 'numeric', 
+                    month: 'long' 
+                });
+                const card = createWeatherCard({
+                    dateStr: weekday,
+                    icon: day.icon,
+                    temp: day.temp,
+                    desc: translateCondition(day.icon, day.conditions),
+                    precip: day.precip,
+                    isToday,
+                });
+                container.appendChild(card);
+            });
+            const current = data.currentConditions;
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString("ru-RU", { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            const currentCard = createWeatherCard({
+                dateStr: '',
+                icon: current.icon,
+                temp: current.temp,
+                desc: translateCondition(current.icon, current.conditions),
+                precip: current.precip,
+                humidity: current.humidity,
+                isCurrent: true,
+                timeStr
+            });
+            container.appendChild(currentCard);
+            const animationType = getAnimationType(current.icon);
+            startAnimation(animationType);
+        } catch (error) {
+            document.getElementById("weather").innerHTML = 
+                "<div class='text-white text-xl'>Ошибка загрузки данных о погоде.</div>";
+            startAnimation(null);
+        }
+    }
+    // Улучшение анимации облаков: добавим плавное изменение opacity и scale
+    function animateCssClouds() {
+        const clouds = document.querySelectorAll('.css-clouds .css-cloud');
+        clouds.forEach((cloud, i) => {
+            let t = Date.now() / 2000 + i;
+            let scale = 0.95 + Math.sin(t + i) * 0.05;
+            let opacity = 0.2 + Math.abs(Math.sin(t + i)) * 0.15;
+            cloud.style.transform = `scale(${scale})`;
+            cloud.style.opacity = opacity;
+        });
+        requestAnimationFrame(animateCssClouds);
+    }
+    // Запуск анимации облаков, если они видимы
+    const observer = new MutationObserver(() => {
+        const cssClouds = document.getElementById('css-clouds');
+        if (cssClouds && cssClouds.style.display === 'block') {
+            animateCssClouds();
+        }
+    });
+    observer.observe(document.body, { childList: false, subtree: true, attributes: true, attributeFilter: ['style'] });
+</script>
