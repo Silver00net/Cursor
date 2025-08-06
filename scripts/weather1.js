@@ -224,7 +224,7 @@ function updateBackground(weatherType, forceNight = null) {
     const timeOfDay = isNight ? 'night' : 'day';
     const gradient = gradients[weatherType]?.[timeOfDay] || gradients['clear-day'].day;
 
-    document.body.style.background = `${gradient}, url('https://i.postimg.cc/NFNgHnkF/image.jpg') no-repeat center center fixed`;
+    document.body.style.background = `${gradient}, url('https://storage.yandexcloud.net/fotora.ru/uploads/870f953768ce9045.png') no-repeat center center fixed`;
     document.body.style.backgroundSize = 'cover';
     document.body.style.backgroundBlendMode = 'overlay';
 }
