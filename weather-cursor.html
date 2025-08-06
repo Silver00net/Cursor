@@ -26,7 +26,7 @@
         -webkit-user-select: none;
         user-select: none;
         position: relative;
-        transition: background 1s ease-in-out;
+        transition: background 1.2s cubic-bezier(0.4,0,0.2,1);
     }
 
     #weather {
@@ -51,14 +51,27 @@
         padding: 1.8rem 2rem;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
         text-align: center;
-        -webkit-backdrop-filter: blur(10px);
-        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
         display: flex;
         flex-direction: column;
         justify-content: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.5s, background 1s;
+        opacity: 1;
+        position: relative;
+        overflow: visible;
     }
-
+    .card.fade-in {
+        animation: fadeIn 0.7s cubic-bezier(0.4,0,0.2,1);
+    }
+    .card.fade-out {
+        animation: fadeOut 0.7s cubic-bezier(0.4,0,0.2,1);
+        opacity: 0;
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; transform: translateY(0); }
+        to { opacity: 0; transform: translateY(20px); }
+    }
     .card.today {
         border: 3px solid #facc15;
     }
@@ -81,6 +94,51 @@
         height: 100px;
         margin-bottom: 1rem;
         align-self: center;
+        transition: transform 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .weather-icon.cloud-animated {
+        animation: cloudWobble 3s ease-in-out infinite;
+    }
+    @keyframes cloudWobble {
+        0%, 100% { transform: translateY(0) scale(1); }
+        20% { transform: translateY(-4px) scale(1.04); }
+        50% { transform: translateY(2px) scale(0.98); }
+        70% { transform: translateY(-2px) scale(1.02); }
+    }
+    .weather-icon.sun-animated {
+        animation: sunSpin 8s linear infinite;
+    }
+    @keyframes sunSpin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    #frost-overlay {
+        pointer-events: none;
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        z-index: 20;
+        background: url('https://i.postimg.cc/3w2QwQ7d/frost.png') repeat;
+        opacity: 0.18;
+        display: none;
+    }
+    #rain-reflection {
+        pointer-events: none;
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        z-index: 21;
+        background: url('https://i.postimg.cc/3Jw1QwQ7/rain-reflection.png') repeat;
+        opacity: 0.13;
+        display: none;
+    }
+    #storm-darken {
+        pointer-events: none;
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        z-index: 22;
+        background: rgba(0,0,0,0.25);
+        opacity: 0;
+        transition: opacity 0.5s;
+        display: none;
     }
 
     .temp {
@@ -331,7 +389,10 @@
     <div class="css-cloud cloud-8"></div>
 </div>
 
-<div id="weather" tabindex="0"></div>
+<div id="weather" tabindex="0" aria-live="polite"></div>
+<div id="frost-overlay"></div>
+<div id="rain-reflection"></div>
+<div id="storm-darken"></div>
 <footer>Москва</footer>
 
 <script>
@@ -1020,6 +1081,7 @@ function updateBackground(weatherType, forceNight = null) {
 
     // Обновляем фон с учетом реального времени суток
     updateBackground(type);
+    updateAtmosphereEffects(type);
 
     if (!weatherType) {
         if (animationId) cancelAnimationFrame(animationId);
@@ -1259,6 +1321,24 @@ function updateBackground(weatherType, forceNight = null) {
             document.getElementById("weather").innerHTML = 
                 "<div class='text-white text-xl'>Ошибка загрузки данных о погоде.</div>";
             startAnimation(null);
+        }
+    }
+
+    function updateAtmosphereEffects(type) {
+        const frost = document.getElementById('frost-overlay');
+        const rain = document.getElementById('rain-reflection');
+        const storm = document.getElementById('storm-darken');
+        frost.style.display = 'none';
+        rain.style.display = 'none';
+        storm.style.display = 'none';
+        if (type === 'snow') {
+            frost.style.display = 'block';
+        } else if (type === 'rain') {
+            rain.style.display = 'block';
+        } else if (type === 'thunderstorm') {
+            storm.style.display = 'block';
+            setTimeout(() => { storm.style.opacity = '1'; }, 100);
+            setTimeout(() => { storm.style.opacity = '0'; }, 800);
         }
     }
 
