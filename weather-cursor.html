@@ -94,7 +94,6 @@
         height: 100px;
         margin-bottom: 1rem;
         align-self: center;
-        transition: transform 1.2s cubic-bezier(0.4,0,0.2,1);
     }
     .weather-icon.cloud-animated {
         animation: cloudWobble 3s ease-in-out infinite;
@@ -1326,20 +1325,14 @@ function updateBackground(weatherType, forceNight = null) {
         const cardElement = document.createElement('div');
         cardElement.className = `card fade-in${isToday ? ' today' : ''}`;
         let dateHtml = isCurrent ? `Сейчас (${timeStr})` : dateStr;
-        let iconClass = '';
-        if (icon.includes('cloud')) iconClass = 'cloud-animated';
-        if (icon.includes('clear-day')) iconClass = 'sun-animated';
         cardElement.innerHTML = `
             <div class="date">${dateHtml}</div>
-            <div style="position:relative;display:flex;justify-content:center;align-items:center;">
-                <img class="weather-icon ${iconClass}" src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${icon}.png" alt="${desc}" />
-            </div>
+            <img class="weather-icon" src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${icon}.png" alt="${desc}" />
             <div class="temp">${Math.round(temp)}°C</div>
             <div class="desc">${desc}</div>
             <div class="small-info">Осадки: ${precip} мм</div>
             ${humidity !== undefined ? `<div class="small-info">Влажность: ${humidity}%</div>` : ''}
         `;
-        setTimeout(() => addWeatherOverlay(cardElement, icon), 0);
         return cardElement;
     }
 
