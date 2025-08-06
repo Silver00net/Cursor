@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Погода в Москве</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles/weather1.css">
+</head>
+<body>
+    <canvas id="background-canvas"></canvas>
+    <canvas id="weather-canvas"></canvas>
+
+    <!-- CSS облака для плавной анимации -->
+    <div id="css-clouds" class="css-clouds">
+        <div class="css-cloud cloud-1"></div>
+        <div class="css-cloud cloud-2"></div>
+        <div class="css-cloud cloud-3"></div>
+        <div class="css-cloud cloud-4"></div>
+        <div class="css-cloud cloud-5"></div>
+        <div class="css-cloud cloud-6"></div>
+        <div class="css-cloud cloud-7"></div>
+        <div class="css-cloud cloud-8"></div>
+    </div>
+
+    <div id="weather" tabindex="0" aria-live="polite"></div>
+    <div id="frost-overlay"></div>
+    <div id="rain-reflection"></div>
+    <div id="storm-darken"></div>
+    <footer>Москва</footer>
+
+    <script src="scripts/weather1.js"></script>
+</body>
+</html>

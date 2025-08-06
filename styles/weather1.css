@@ -1,0 +1,272 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: sans-serif;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
+                url('https://i.postimg.cc/NFNgHnkF/image.jpg') no-repeat center center fixed;
+    background-size: cover;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    -webkit-user-select: none;
+    user-select: none;
+    position: relative;
+    transition: background 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+
+#weather {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 1fr;
+    gap: 1.8rem;
+    width: 100%;
+    max-width: 1200px;
+    height: 900px;
+    padding: 20px 20px 0 20px;
+    box-sizing: border-box;
+    margin-top: 1.5rem;
+    position: relative;
+    z-index: 10;
+}
+
+.card {
+    background: rgba(255, 255, 255, 0.85);
+    color: #1f2937;
+    border-radius: 1rem;
+    padding: 1.8rem 2rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.5s, background 1s;
+    opacity: 1;
+    position: relative;
+    overflow: visible;
+}
+.card.fade-in {
+    animation: fadeIn 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+.card.fade-out {
+    animation: fadeOut 0.7s cubic-bezier(0.4,0,0.2,1);
+    opacity: 0;
+}
+@keyframes fadeOut {
+    from { opacity: 1; transform: translateY(0); }
+    to { opacity: 0; transform: translateY(20px); }
+}
+.card.today {
+    border: 3px solid #facc15;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+    cursor: default;
+}
+
+.date {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.9rem;
+    color: #374151;
+}
+
+img.weather-icon {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 1rem;
+    align-self: center;
+}
+
+.temp {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+}
+
+.desc {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.small-info {
+    font-size: 1.1rem;
+    color: #2563eb;
+    margin-bottom: 0.5rem;
+}
+
+footer {
+    width: 100%;
+    max-width: 1280px;
+    text-align: center;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: white;
+    padding: 1rem 0 1.5rem 0;
+    text-shadow: 2px 2px 6px rgba(0,0,0,0.8);
+    -webkit-user-select: text;
+    user-select: text;
+    position: relative;
+    z-index: 10;
+}
+
+#weather-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 5;
+    display: none;
+}
+
+#background-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* CSS облака для плавной анимации в Edge */
+.css-clouds {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 4;
+    display: none;
+}
+
+.css-cloud {
+    position: absolute;
+    background: white;
+    border-radius: 50px;
+    opacity: 0.3;
+    will-change: transform;
+    transform: translate3d(0, 0, 0);
+}
+
+.css-cloud::before,
+.css-cloud::after {
+    content: '';
+    position: absolute;
+    background: white;
+    border-radius: 50px;
+}
+
+.css-cloud::before {
+    width: 50px;
+    height: 50px;
+    top: -25px;
+    left: 10px;
+}
+
+.css-cloud::after {
+    width: 60px;
+    height: 60px;
+    top: -35px;
+    right: 15px;
+}
+
+/* Анимации для разных облаков */
+.cloud-1 { width: 80px; height: 40px; top: 50px; animation: moveCloud 60s linear infinite; }
+.cloud-2 { width: 100px; height: 50px; top: 120px; animation: moveCloud 80s linear infinite; }
+.cloud-3 { width: 70px; height: 35px; top: 90px; animation: moveCloud 70s linear infinite; }
+.cloud-4 { width: 90px; height: 45px; top: 160px; animation: moveCloud 90s linear infinite; }
+.cloud-5 { width: 110px; height: 55px; top: 200px; animation: moveCloud 100s linear infinite; }
+.cloud-6 { width: 85px; height: 42px; top: 240px; animation: moveCloud 75s linear infinite; }
+.cloud-7 { width: 95px; height: 47px; top: 280px; animation: moveCloud 85s linear infinite; }
+.cloud-8 { width: 75px; height: 37px; top: 320px; animation: moveCloud 65s linear infinite; }
+
+@keyframes moveCloud {
+    0% { transform: translate3d(100vw, 0, 0); }
+    100% { transform: translate3d(-200px, 0, 0); }
+}
+
+/* Анимации переходов */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Облака для частичной облачности - меньше и реже */
+.css-clouds.partly-cloudy .css-cloud {
+    opacity: 0.2;
+}
+
+.css-clouds.partly-cloudy .cloud-1 { animation-delay: 0s; }
+.css-clouds.partly-cloudy .cloud-2 { animation-delay: 15s; }
+.css-clouds.partly-cloudy .cloud-3 { animation-delay: 30s; }
+.css-clouds.partly-cloudy .cloud-4 { display: none; }
+.css-clouds.partly-cloudy .cloud-5 { display: none; }
+.css-clouds.partly-cloudy .cloud-6 { display: none; }
+.css-clouds.partly-cloudy .cloud-7 { display: none; }
+.css-clouds.partly-cloudy .cloud-8 { display: none; }
+
+/* Облака для полной облачности - больше и плотнее */
+.css-clouds.full-cloudy .css-cloud {
+    opacity: 0.4;
+}
+
+.css-clouds.full-cloudy .cloud-1 { width: 120px; height: 60px; }
+.css-clouds.full-cloudy .cloud-2 { width: 140px; height: 70px; }
+.css-clouds.full-cloudy .cloud-3 { width: 100px; height: 50px; }
+.css-clouds.full-cloudy .cloud-4 { width: 130px; height: 65px; }
+.css-clouds.full-cloudy .cloud-5 { width: 150px; height: 75px; }
+.css-clouds.full-cloudy .cloud-6 { width: 125px; height: 62px; }
+.css-clouds.full-cloudy .cloud-7 { width: 135px; height: 67px; }
+.css-clouds.full-cloudy .cloud-8 { width: 115px; height: 57px; }
+
+/* Эффект инея по краям экрана для снега */
+#frost-overlay {
+    pointer-events: none;
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 20;
+    background: url('https://i.postimg.cc/3w2QwQ7d/frost.png') repeat;
+    opacity: 0.18;
+    display: none;
+}
+
+/* Эффект отражения капель для дождя */
+#rain-reflection {
+    pointer-events: none;
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 21;
+    background: url('https://i.postimg.cc/3Jw1QwQ7/rain-reflection.png') repeat;
+    opacity: 0.13;
+    display: none;
+}
+
+/* Эффект затемнения для грозы */
+#storm-darken {
+    pointer-events: none;
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 22;
+    background: rgba(0,0,0,0.25);
+    opacity: 0;
+    transition: opacity 0.5s;
+    display: none;
+}
