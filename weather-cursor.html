@@ -1,4 +1,4 @@
-Что предложишь улучшить? <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8" />
@@ -26,7 +26,7 @@
         -webkit-user-select: none;
         user-select: none;
         position: relative;
-        transition: background 1s ease-in-out;
+        transition: background 1.2s cubic-bezier(0.4,0,0.2,1);
     }
 
     #weather {
@@ -51,14 +51,27 @@
         padding: 1.8rem 2rem;
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
         text-align: center;
-        -webkit-backdrop-filter: blur(10px);
-        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
         display: flex;
         flex-direction: column;
         justify-content: center;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.5s, background 1s;
+        opacity: 1;
+        position: relative;
+        overflow: visible;
     }
-
+    .card.fade-in {
+        animation: fadeIn 0.7s cubic-bezier(0.4,0,0.2,1);
+    }
+    .card.fade-out {
+        animation: fadeOut 0.7s cubic-bezier(0.4,0,0.2,1);
+        opacity: 0;
+    }
+    @keyframes fadeOut {
+        from { opacity: 1; transform: translateY(0); }
+        to { opacity: 0; transform: translateY(20px); }
+    }
     .card.today {
         border: 3px solid #facc15;
     }
@@ -81,6 +94,50 @@
         height: 100px;
         margin-bottom: 1rem;
         align-self: center;
+    }
+    .weather-icon.cloud-animated {
+        animation: cloudWobble 3s ease-in-out infinite;
+    }
+    @keyframes cloudWobble {
+        0%, 100% { transform: translateY(0) scale(1); }
+        20% { transform: translateY(-4px) scale(1.04); }
+        50% { transform: translateY(2px) scale(0.98); }
+        70% { transform: translateY(-2px) scale(1.02); }
+    }
+    .weather-icon.sun-animated {
+        animation: sunSpin 8s linear infinite;
+    }
+    @keyframes sunSpin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    #frost-overlay {
+        pointer-events: none;
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        z-index: 20;
+        background: url('https://i.postimg.cc/3w2QwQ7d/frost.png') repeat;
+        opacity: 0.18;
+        display: none;
+    }
+    #rain-reflection {
+        pointer-events: none;
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        z-index: 21;
+        background: url('https://i.postimg.cc/3Jw1QwQ7/rain-reflection.png') repeat;
+        opacity: 0.13;
+        display: none;
+    }
+    #storm-darken {
+        pointer-events: none;
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        z-index: 22;
+        background: rgba(0,0,0,0.25);
+        opacity: 0;
+        transition: opacity 0.5s;
+        display: none;
     }
 
     .temp {
@@ -180,98 +237,16 @@
     }
 
     /* Анимации для разных облаков */
-    .cloud-1 {
-        width: 80px;
-        height: 40px;
-        top: 50px;
-        animation: moveCloud1 60s linear infinite;
-    }
+    .cloud-1 { width: 80px; height: 40px; top: 50px; animation: moveCloud 60s linear infinite; }
+    .cloud-2 { width: 100px; height: 50px; top: 120px; animation: moveCloud 80s linear infinite; }
+    .cloud-3 { width: 70px; height: 35px; top: 90px; animation: moveCloud 70s linear infinite; }
+    .cloud-4 { width: 90px; height: 45px; top: 160px; animation: moveCloud 90s linear infinite; }
+    .cloud-5 { width: 110px; height: 55px; top: 200px; animation: moveCloud 100s linear infinite; }
+    .cloud-6 { width: 85px; height: 42px; top: 240px; animation: moveCloud 75s linear infinite; }
+    .cloud-7 { width: 95px; height: 47px; top: 280px; animation: moveCloud 85s linear infinite; }
+    .cloud-8 { width: 75px; height: 37px; top: 320px; animation: moveCloud 65s linear infinite; }
 
-    .cloud-2 {
-        width: 100px;
-        height: 50px;
-        top: 120px;
-        animation: moveCloud2 80s linear infinite;
-    }
-
-    .cloud-3 {
-        width: 70px;
-        height: 35px;
-        top: 90px;
-        animation: moveCloud3 70s linear infinite;
-    }
-
-    .cloud-4 {
-        width: 90px;
-        height: 45px;
-        top: 160px;
-        animation: moveCloud4 90s linear infinite;
-    }
-
-    .cloud-5 {
-        width: 110px;
-        height: 55px;
-        top: 200px;
-        animation: moveCloud5 100s linear infinite;
-    }
-
-    .cloud-6 {
-        width: 85px;
-        height: 42px;
-        top: 240px;
-        animation: moveCloud6 75s linear infinite;
-    }
-
-    .cloud-7 {
-        width: 95px;
-        height: 47px;
-        top: 280px;
-        animation: moveCloud7 85s linear infinite;
-    }
-
-    .cloud-8 {
-        width: 75px;
-        height: 37px;
-        top: 320px;
-        animation: moveCloud8 65s linear infinite;
-    }
-
-    @keyframes moveCloud1 {
-        0% { transform: translate3d(100vw, 0, 0); }
-        100% { transform: translate3d(-200px, 0, 0); }
-    }
-
-    @keyframes moveCloud2 {
-        0% { transform: translate3d(100vw, 0, 0); }
-        100% { transform: translate3d(-200px, 0, 0); }
-    }
-
-    @keyframes moveCloud3 {
-        0% { transform: translate3d(100vw, 0, 0); }
-        100% { transform: translate3d(-200px, 0, 0); }
-    }
-
-    @keyframes moveCloud4 {
-        0% { transform: translate3d(100vw, 0, 0); }
-        100% { transform: translate3d(-200px, 0, 0); }
-    }
-
-    @keyframes moveCloud5 {
-        0% { transform: translate3d(100vw, 0, 0); }
-        100% { transform: translate3d(-200px, 0, 0); }
-    }
-
-    @keyframes moveCloud6 {
-        0% { transform: translate3d(100vw, 0, 0); }
-        100% { transform: translate3d(-200px, 0, 0); }
-    }
-
-    @keyframes moveCloud7 {
-        0% { transform: translate3d(100vw, 0, 0); }
-        100% { transform: translate3d(-200px, 0, 0); }
-    }
-
-    @keyframes moveCloud8 {
+    @keyframes moveCloud {
         0% { transform: translate3d(100vw, 0, 0); }
         100% { transform: translate3d(-200px, 0, 0); }
     }
@@ -331,7 +306,10 @@
     <div class="css-cloud cloud-8"></div>
 </div>
 
-<div id="weather" tabindex="0"></div>
+<div id="weather" tabindex="0" aria-live="polite"></div>
+<div id="frost-overlay"></div>
+<div id="rain-reflection"></div>
+<div id="storm-darken"></div>
 <footer>Москва</footer>
 
 <script>
@@ -339,7 +317,14 @@
     const LAT = 55.75222;
     const LON = 37.61556;
 
-    const conditionMap = {
+    // Кэшированные DOM-элементы
+    const weatherContainer = document.getElementById("weather");
+    const frostOverlay = document.getElementById('frost-overlay');
+    const rainReflection = document.getElementById('rain-reflection');
+    const stormDarken = document.getElementById('storm-darken');
+    const cssCloudContainer = document.getElementById('css-clouds');
+
+    const conditionMap = Object.freeze({
         "clear-day": "Ясно",
         "clear-night": "Ясная ночь",
         "partly-cloudy-day": "Переменная облачность",
@@ -353,39 +338,38 @@
         "thunderstorm": "Гроза",
         "showers-day": "Ливень",
         "showers-night": "Ночной ливень"
-    };
+    });
+
+    // Кэш для вычислений времени суток
+    const sunTimesCache = new Map();
 
     function translateCondition(code, fallback) {
         return conditionMap[code] || fallback || code;
     }
 
     function getAnimationType(icon) {
-    if (!icon) return null;
-    icon = icon.toLowerCase();
-    
-    // Определяем базовый тип погоды
-    if (icon.includes('rain') || icon.includes('showers')) return 'rain';
-    if (icon.includes('snow')) return 'snow';
-    if (icon.includes('thunderstorm') || icon.includes('tstorm')) return 'thunderstorm';
-    if (icon.includes('fog')) return 'fog';
-    if (icon.includes('wind')) return 'wind';
-    if (icon.includes('hail')) return 'hail';
-    if (icon.includes('clear-day')) return 'clear-day';
-    if (icon.includes('clear-night')) return 'clear-night';
-    
-    // Различаем типы облачности
-    if (icon.includes('partly-cloudy')) return 'partly-cloudy';
-    if (icon.includes('cloudy')) return 'cloudy';
-    
-    return null;
-}
+        if (!icon) return null;
+        icon = icon.toLowerCase();
+        
+        if (icon.includes('rain') || icon.includes('showers')) return 'rain';
+        if (icon.includes('snow')) return 'snow';
+        if (icon.includes('thunderstorm') || icon.includes('tstorm')) return 'thunderstorm';
+        if (icon.includes('fog')) return 'fog';
+        if (icon.includes('wind')) return 'wind';
+        if (icon.includes('hail')) return 'hail';
+        if (icon.includes('clear-day')) return 'clear-day';
+        if (icon.includes('clear-night')) return 'clear-night';
+        if (icon.includes('partly-cloudy')) return 'partly-cloudy';
+        if (icon.includes('cloudy')) return 'cloudy';
+        
+        return null;
+    }
 
     // Канвасы и контексты
     const canvas = document.getElementById('weather-canvas');
     const ctx = canvas.getContext('2d');
     const bgCanvas = document.getElementById('background-canvas');
     const bgCtx = bgCanvas.getContext('2d');
-    const cssCloudContainer = document.getElementById('css-clouds');
     
     let width, height;
     let animationId, bgAnimationId;
@@ -402,7 +386,7 @@
     let isPageVisible = true;
 
     // Оптимизация производительности
-    let performanceMode = 'high'; // high, medium, low
+    let performanceMode = 'high';
 
     // Определение производительности устройства
     function detectPerformance() {
@@ -424,7 +408,6 @@
             }
         }
 
-        // Проверка на мобильные устройства
         if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
             performanceMode = performanceMode === 'high' ? 'medium' : 'low';
         }
@@ -448,7 +431,6 @@
         width = window.innerWidth;
         height = window.innerHeight;
         
-        // Основной канвас
         canvas.width = width * devicePixelRatio;
         canvas.height = height * devicePixelRatio;
         canvas.style.width = width + 'px';
@@ -456,7 +438,6 @@
         ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.scale(devicePixelRatio, devicePixelRatio);
         
-        // Фоновый канвас
         bgCanvas.width = width * devicePixelRatio;
         bgCanvas.height = height * devicePixelRatio;
         bgCanvas.style.width = width + 'px';
@@ -468,111 +449,99 @@
     window.addEventListener('resize', resize);
     resize();
 
-    // Функция для вычисления времени заката и рассвета
-function getSunTimes(lat, lon, date = new Date()) {
-    const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 86400000);
-    const P = Math.asin(0.39795 * Math.cos(0.98563 * (dayOfYear - 173) * Math.PI / 180));
-    
-    const argument = -Math.tan(lat * Math.PI / 180) * Math.tan(P);
-    let hourAngle = Math.acos(Math.max(-1, Math.min(1, argument)));
-    
-    const decimalHours = 12 * (1 + hourAngle / Math.PI);
-    const sunrise = 12 - decimalHours;
-    const sunset = 12 + decimalHours;
-    
-    return {
-        sunrise: sunrise,
-        sunset: sunset
+    // Функция для вычисления времени заката и рассвета с кэшированием
+    function getSunTimes(lat, lon, date = new Date()) {
+        const key = `${lat}-${lon}-${date.toDateString()}`;
+        if (sunTimesCache.has(key)) {
+            return sunTimesCache.get(key);
+        }
+
+        const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 86400000);
+        const P = Math.asin(0.39795 * Math.cos(0.98563 * (dayOfYear - 173) * Math.PI / 180));
+        
+        const argument = -Math.tan(lat * Math.PI / 180) * Math.tan(P);
+        let hourAngle = Math.acos(Math.max(-1, Math.min(1, argument)));
+        
+        const decimalHours = 12 * (1 + hourAngle / Math.PI);
+        const sunrise = 12 - decimalHours;
+        const sunset = 12 + decimalHours;
+        
+        const result = { sunrise, sunset };
+        sunTimesCache.set(key, result);
+        return result;
+    }
+
+    // Умное определение времени суток
+    function isNightTime(weatherType = null) {
+        const now = new Date();
+        const hour = now.getHours();
+        const minutes = now.getMinutes();
+        const currentTime = hour + minutes / 60;
+        
+        const sunTimes = getSunTimes(LAT * Math.PI / 180, LON * Math.PI / 180);
+        let sunrise = sunTimes.sunrise;
+        let sunset = sunTimes.sunset;
+        
+        sunrise += 3;
+        sunset += 3;
+        
+        if (weatherType && (weatherType.includes('cloudy') || weatherType.includes('rain') || 
+                           weatherType.includes('thunderstorm') || weatherType.includes('fog'))) {
+            sunset -= 0.5;
+            sunrise += 0.5;
+        }
+        
+        return currentTime < sunrise || currentTime > sunset;
+    }
+
+    // Оптимизированная функция updateBackground с объектом градиентов
+    const gradients = {
+        'clear-day': {
+            day: 'linear-gradient(135deg, #87CEEB 0%, #98D8E8 50%, #F0E68C 100%)',
+            night: 'linear-gradient(135deg, #0F0F23 0%, #1a1a3e 50%, #2D1B69 100%)'
+        },
+        'clear-night': {
+            night: 'linear-gradient(135deg, #0F0F23 0%, #1a1a3e 50%, #2D1B69 100%)'
+        },
+        'rain': {
+            day: 'linear-gradient(135deg, #2C3E50 0%, #34495E 50%, #5D6D7E 100%)',
+            night: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+        },
+        'thunderstorm': {
+            day: 'linear-gradient(135deg, #2C3E50 0%, #34495E 50%, #5D6D7E 100%)',
+            night: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
+        },
+        'snow': {
+            day: 'linear-gradient(135deg, #E8E8E8 0%, #D5D5D5 50%, #C0C0C0 100%)',
+            night: 'linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #5d6d7e 100%)'
+        },
+        'cloudy': {
+            day: 'linear-gradient(135deg, #BDC3C7 0%, #95A5A6 50%, #7F8C8D 100%)',
+            night: 'linear-gradient(135deg, #34495e 0%, #2c3e50 50%, #1a252f 100%)'
+        },
+        'fog': {
+            day: 'linear-gradient(135deg, #D5DBDB 0%, #AEB6BF 50%, #85929E 100%)',
+            night: 'linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #5d6d7e 100%)'
+        },
+        'wind': {
+            day: 'linear-gradient(135deg, #BDC3C7 0%, #95A5A6 50%, #7F8C8D 100%)',
+            night: 'linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #5d6d7e 100%)'
+        },
+        'hail': {
+            day: 'linear-gradient(135deg, #85929E 0%, #AEB6BF 50%, #D5DBDB 100%)',
+            night: 'linear-gradient(135deg, #1a252f 0%, #2c3e50 50%, #34495e 100%)'
+        }
     };
-}
 
-// Умное определение времени суток
-function isNightTime(weatherType = null) {
-    const now = new Date();
-    const hour = now.getHours();
-    const minutes = now.getMinutes();
-    const currentTime = hour + minutes / 60;
-    
-    // Получаем реальное время заката и рассвета для Москвы
-    const sunTimes = getSunTimes(LAT * Math.PI / 180, LON * Math.PI / 180);
-    let sunrise = sunTimes.sunrise;
-    let sunset = sunTimes.sunset;
-    
-    // Корректировка для часового пояса Москвы (UTC+3)
-    sunrise += 3;
-    sunset += 3;
-    
-    // Учитываем погодные условия - в пасмурную погоду темнеет раньше
-    if (weatherType && (weatherType.includes('cloudy') || weatherType.includes('rain') || 
-                       weatherType.includes('thunderstorm') || weatherType.includes('fog'))) {
-        sunset -= 0.5; // Темнеет на 30 минут раньше в плохую погоду
-        sunrise += 0.5; // Светлеет на 30 минут позже
+    function updateBackground(weatherType, forceNight = null) {
+        const isNight = forceNight !== null ? forceNight : isNightTime(weatherType);
+        const timeOfDay = isNight ? 'night' : 'day';
+        const gradient = gradients[weatherType]?.[timeOfDay] || gradients['clear-day'].day;
+
+        document.body.style.background = `${gradient}, url('https://i.postimg.cc/NFNgHnkF/image.jpg') no-repeat center center fixed`;
+        document.body.style.backgroundSize = 'cover';
+        document.body.style.backgroundBlendMode = 'overlay';
     }
-    
-    // Проверяем, ночь ли сейчас
-    return currentTime < sunrise || currentTime > sunset;
-}
-
-// Обновленная функция updateBackground
-function updateBackground(weatherType, forceNight = null) {
-    const body = document.body;
-    let gradient;
-    
-    // Определяем время суток умно
-    const isNight = forceNight !== null ? forceNight : isNightTime(weatherType);
-    
-    console.log(`Время суток: ${isNight ? 'Ночь' : 'День'} для погоды: ${weatherType}`);
-    
-    switch(weatherType) {
-        case 'clear-day':
-            gradient = isNight 
-                ? 'linear-gradient(135deg, #0F0F23 0%, #1a1a3e 50%, #2D1B69 100%)'
-                : 'linear-gradient(135deg, #87CEEB 0%, #98D8E8 50%, #F0E68C 100%)';
-            break;
-        case 'clear-night':
-            gradient = 'linear-gradient(135deg, #0F0F23 0%, #1a1a3e 50%, #2D1B69 100%)';
-            break;
-        case 'rain':
-        case 'thunderstorm':
-            gradient = isNight
-                ? 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
-                : 'linear-gradient(135deg, #2C3E50 0%, #34495E 50%, #5D6D7E 100%)';
-            break;
-        case 'snow':
-            gradient = isNight
-                ? 'linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #5d6d7e 100%)'
-                : 'linear-gradient(135deg, #E8E8E8 0%, #D5D5D5 50%, #C0C0C0 100%)';
-            break;
-        case 'cloudy':
-            gradient = isNight
-                ? 'linear-gradient(135deg, #34495e 0%, #2c3e50 50%, #1a252f 100%)'
-                : 'linear-gradient(135deg, #BDC3C7 0%, #95A5A6 50%, #7F8C8D 100%)';
-            break;
-        case 'fog':
-            gradient = isNight
-                ? 'linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #5d6d7e 100%)'
-                : 'linear-gradient(135deg, #D5DBDB 0%, #AEB6BF 50%, #85929E 100%)';
-            break;
-        case 'wind':
-            gradient = isNight
-                ? 'linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #5d6d7e 100%)'
-                : 'linear-gradient(135deg, #BDC3C7 0%, #95A5A6 50%, #7F8C8D 100%)';
-            break;
-        case 'hail':
-            gradient = isNight
-                ? 'linear-gradient(135deg, #1a252f 0%, #2c3e50 50%, #34495e 100%)'
-                : 'linear-gradient(135deg, #85929E 0%, #AEB6BF 50%, #D5DBDB 100%)';
-            break;
-        default:
-            gradient = isNight
-                ? 'linear-gradient(135deg, #0F0F23 0%, #1a1a3e 50%, #2D1B69 100%)'
-                : 'linear-gradient(135deg, #87CEEB 0%, #98D8E8 50%, #F0E68C 100%)';
-    }
-
-    body.style.background = `${gradient}, url('https://i.postimg.cc/NFNgHnkF/image.jpg') no-repeat center center fixed`;
-    body.style.backgroundSize = 'cover';
-    body.style.backgroundBlendMode = 'overlay';
-}
 
     // Звезды для ночного неба
     class Star {
@@ -1020,6 +989,7 @@ function updateBackground(weatherType, forceNight = null) {
 
     // Обновляем фон с учетом реального времени суток
     updateBackground(type);
+    updateAtmosphereEffects(type);
 
     if (!weatherType) {
         if (animationId) cancelAnimationFrame(animationId);
@@ -1194,22 +1164,29 @@ function updateBackground(weatherType, forceNight = null) {
         bgAnimationId = requestAnimationFrame(animateBackground);
     }
 
+    function createWeatherCard({ dateStr, icon, temp, desc, precip, humidity, isToday, isCurrent, timeStr }) {
+        const cardElement = document.createElement('div');
+        cardElement.className = `card fade-in${isToday ? ' today' : ''}`;
+        let dateHtml = isCurrent ? `Сейчас (${timeStr})` : dateStr;
+        cardElement.innerHTML = `
+            <div class="date">${dateHtml}</div>
+            <img class="weather-icon" src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${icon}.png" alt="${desc}" />
+            <div class="temp">${Math.round(temp)}°C</div>
+            <div class="desc">${desc}</div>
+            <div class="small-info">Осадки: ${precip} мм</div>
+            ${humidity !== undefined ? `<div class="small-info">Влажность: ${humidity}%</div>` : ''}
+        `;
+        return cardElement;
+    }
+
     async function getWeather() {
         const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${LAT},${LON}/next4days?unitGroup=metric&key=${API_KEY}&contentType=json`;
-        
         try {
             const res = await fetch(url);
             const data = await res.json();
-            
-            console.log("Текущий icon:", data.currentConditions.icon);
-            console.log("Данные дня:", data.days.map(d => d.icon));
-
-            const container = document.getElementById("weather");
-            container.innerHTML = "";
-
+            weatherContainer.innerHTML = "";
             const days = data.days;
             const todayStr = new Date().toISOString().split("T")[0];
-
             days.forEach(day => {
                 const date = new Date(day.datetime);
                 const isToday = day.datetime === todayStr;
@@ -1218,47 +1195,55 @@ function updateBackground(weatherType, forceNight = null) {
                     day: 'numeric', 
                     month: 'long' 
                 });
-
-                const cardElement = document.createElement('div');
-                cardElement.className = `card fade-in ${isToday ? "today" : ""}`;
-                cardElement.innerHTML = `
-                    <div class="date">${weekday}</div>
-                    <img class="weather-icon" src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${day.icon}.png" alt="${day.conditions}" />
-                    <div class="temp">${Math.round(day.temp)}°C</div>
-                    <div class="desc">${translateCondition(day.icon, day.conditions)}</div>
-                    <div class="small-info">Осадки: ${day.precip} мм</div>
-                `;
-                container.appendChild(cardElement);
+                const card = createWeatherCard({
+                    dateStr: weekday,
+                    icon: day.icon,
+                    temp: day.temp,
+                    desc: translateCondition(day.icon, day.conditions),
+                    precip: day.precip,
+                    isToday,
+                });
+                weatherContainer.appendChild(card);
             });
-
             const current = data.currentConditions;
             const now = new Date();
             const timeStr = now.toLocaleTimeString("ru-RU", { 
                 hour: '2-digit', 
                 minute: '2-digit' 
             });
-
-            const currentCardElement = document.createElement('div');
-            currentCardElement.className = 'card fade-in';
-            currentCardElement.innerHTML = `
-                <div class="date">Сейчас (${timeStr})</div>
-                <img class="weather-icon" src="https://raw.githubusercontent.com/visualcrossing/WeatherIcons/main/PNG/2nd%20Set%20-%20Color/${current.icon}.png" alt="${current.conditions}" />
-                <div class="temp">${Math.round(current.temp)}°C</div>
-                <div class="desc">${translateCondition(current.icon, current.conditions)}</div>
-                <div class="small-info">Осадки: ${current.precip} мм</div>
-                <div class="small-info">Влажность: ${current.humidity}%</div>
-            `;
-            container.appendChild(currentCardElement);
-
+            const currentCard = createWeatherCard({
+                dateStr: '',
+                icon: current.icon,
+                temp: current.temp,
+                desc: translateCondition(current.icon, current.conditions),
+                precip: current.precip,
+                humidity: current.humidity,
+                isCurrent: true,
+                timeStr
+            });
+            weatherContainer.appendChild(currentCard);
             const animationType = getAnimationType(current.icon);
-            console.log("Запускаем анимацию:", animationType);
             startAnimation(animationType);
-
         } catch (error) {
-            console.error("Ошибка загрузки погоды:", error);
-            document.getElementById("weather").innerHTML = 
+            weatherContainer.innerHTML = 
                 "<div class='text-white text-xl'>Ошибка загрузки данных о погоде.</div>";
             startAnimation(null);
+        }
+    }
+
+    function updateAtmosphereEffects(type) {
+        frostOverlay.style.display = 'none';
+        rainReflection.style.display = 'none';
+        stormDarken.style.display = 'none';
+        
+        if (type === 'snow') {
+            frostOverlay.style.display = 'block';
+        } else if (type === 'rain') {
+            rainReflection.style.display = 'block';
+        } else if (type === 'thunderstorm') {
+            stormDarken.style.display = 'block';
+            setTimeout(() => { stormDarken.style.opacity = '1'; }, 100);
+            setTimeout(() => { stormDarken.style.opacity = '0'; }, 800);
         }
     }
 
@@ -1267,3 +1252,4 @@ function updateBackground(weatherType, forceNight = null) {
 </script>
 </body>
 </html>
+
