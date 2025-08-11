@@ -7,8 +7,7 @@ html, body {
     font-family: sans-serif;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
-    background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.45)),
-                url('https://storage.yandexcloud.net/fotora.ru/uploads/870f953768ce9045.png') no-repeat center center fixed;
+    background: url('https://kurscbrf.free.nf/New1/weather-app/Fon.jpg') no-repeat center center fixed;
     background-size: cover;
     color: white;
     display: flex;
@@ -18,7 +17,7 @@ html, body {
     -webkit-user-select: none;
     user-select: none;
     position: relative;
-    transition: background 1.2s cubic-bezier(0.4,0,0.2,1);
+    /* transition: background 1.2s cubic-bezier(0.4,0,0.2,1); */
 }
 
 #weather {
@@ -237,13 +236,39 @@ footer {
 .css-clouds.full-cloudy .cloud-7 { width: 135px; height: 67px; }
 .css-clouds.full-cloudy .cloud-8 { width: 115px; height: 57px; }
 
+.lightning-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 3;
+    mix-blend-mode: overlay; /* эффект "света" */
+}
+
+@keyframes lightning-flash {
+    0%, 100% { opacity: 0; }
+    2% { opacity: 1; }
+    4% { opacity: 0; }
+    6% { opacity: 1; }
+    8% { opacity: 0; }
+}
+
+.lightning-overlay.active {
+    animation: lightning-flash 2s infinite;
+    animation-delay: calc(var(--random-delay, 0s));
+}
+
 /* Эффект инея по краям экрана для снега */
 #frost-overlay {
     pointer-events: none;
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
     z-index: 20;
-    background: url('https://i.postimg.cc/3w2QwQ7d/frost.png') repeat;
+    background: url('images/frost-texture.png') repeat;
     opacity: 0.18;
     display: none;
 }
@@ -254,7 +279,7 @@ footer {
     position: fixed;
     top: 0; left: 0; width: 100vw; height: 100vh;
     z-index: 21;
-    background: url('https://i.postimg.cc/3Jw1QwQ7/rain-reflection.png') repeat;
+    background: url('images/rain-texture.png') repeat;
     opacity: 0.13;
     display: none;
 }
