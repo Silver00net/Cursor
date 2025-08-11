@@ -1,12 +1,13 @@
 // Константы
 const API_KEY = "A9P886A459EDF4PKBQFSACZMY";
-const LAT = 55.75222;
-const LON = 37.61556;
+const LAT = 55.6944;
+const LON = 37.6669;
 
 // Кэшированные DOM-элементы
 const weatherContainer = document.getElementById("weather");
 const frostOverlay = document.getElementById('frost-overlay');
 const rainReflection = document.getElementById('rain-reflection');
+const lightningOverlay = document.querySelector('.lightning-overlay');
 const stormDarken = document.getElementById('storm-darken');
 const cssCloudContainer = document.getElementById('css-clouds');
 
@@ -26,8 +27,7 @@ const conditionMap = Object.freeze({
     "showers-night": "Ночной ливень"
 });
 
-// Кэш для вычислений времени суток
-const sunTimesCache = new Map();
+// Кэш для вычислений времени суток удален - больше не нужен
 
 function translateCondition(code, fallback) {
     return conditionMap[code] || fallback || code;
@@ -135,99 +135,11 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-// Функция для вычисления времени заката и рассвета с кэшированием
-function getSunTimes(lat, lon, date = new Date()) {
-    const key = `${lat}-${lon}-${date.toDateString()}`;
-    if (sunTimesCache.has(key)) {
-        return sunTimesCache.get(key);
-    }
+// Функция getSunTimes удалена - больше не нужна для изменения фона
 
-    const dayOfYear = Math.floor((date - new Date(date.getFullYear(), 0, 0)) / 86400000);
-    const P = Math.asin(0.39795 * Math.cos(0.98563 * (dayOfYear - 173) * Math.PI / 180));
-    
-    const argument = -Math.tan(lat * Math.PI / 180) * Math.tan(P);
-    let hourAngle = Math.acos(Math.max(-1, Math.min(1, argument)));
-    
-    const decimalHours = 12 * (1 + hourAngle / Math.PI);
-    const sunrise = 12 - decimalHours;
-    const sunset = 12 + decimalHours;
-    
-    const result = { sunrise, sunset };
-    sunTimesCache.set(key, result);
-    return result;
-}
+// Функция isNightTime удалена - больше не нужна для изменения фона
 
-// Умное определение времени суток
-function isNightTime(weatherType = null) {
-    const now = new Date();
-    const hour = now.getHours();
-    const minutes = now.getMinutes();
-    const currentTime = hour + minutes / 60;
-    
-    const sunTimes = getSunTimes(LAT * Math.PI / 180, LON * Math.PI / 180);
-    let sunrise = sunTimes.sunrise;
-    let sunset = sunTimes.sunset;
-    
-    sunrise += 3;
-    sunset += 3;
-    
-    if (weatherType && (weatherType.includes('cloudy') || weatherType.includes('rain') || 
-                       weatherType.includes('thunderstorm') || weatherType.includes('fog'))) {
-        sunset -= 0.5;
-        sunrise += 0.5;
-    }
-    
-    return currentTime < sunrise || currentTime > sunset;
-}
-
-// Оптимизированная функция updateBackground с объектом градиентов
-const gradients = {
-    'clear-day': {
-        day: 'linear-gradient(135deg, #87CEEB 0%, #98D8E8 50%, #F0E68C 100%)',
-        night: 'linear-gradient(135deg, #0F0F23 0%, #1a1a3e 50%, #2D1B69 100%)'
-    },
-    'clear-night': {
-        night: 'linear-gradient(135deg, #0F0F23 0%, #1a1a3e 50%, #2D1B69 100%)'
-    },
-    'rain': {
-        day: 'linear-gradient(135deg, #2C3E50 0%, #34495E 50%, #5D6D7E 100%)',
-        night: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
-    },
-    'thunderstorm': {
-        day: 'linear-gradient(135deg, #2C3E50 0%, #34495E 50%, #5D6D7E 100%)',
-        night: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)'
-    },
-    'snow': {
-        day: 'linear-gradient(135deg, #E8E8E8 0%, #D5D5D5 50%, #C0C0C0 100%)',
-        night: 'linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #5d6d7e 100%)'
-    },
-    'cloudy': {
-        day: 'linear-gradient(135deg, #BDC3C7 0%, #95A5A6 50%, #7F8C8D 100%)',
-        night: 'linear-gradient(135deg, #34495e 0%, #2c3e50 50%, #1a252f 100%)'
-    },
-    'fog': {
-        day: 'linear-gradient(135deg, #D5DBDB 0%, #AEB6BF 50%, #85929E 100%)',
-        night: 'linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #5d6d7e 100%)'
-    },
-    'wind': {
-        day: 'linear-gradient(135deg, #BDC3C7 0%, #95A5A6 50%, #7F8C8D 100%)',
-        night: 'linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #5d6d7e 100%)'
-    },
-    'hail': {
-        day: 'linear-gradient(135deg, #85929E 0%, #AEB6BF 50%, #D5DBDB 100%)',
-        night: 'linear-gradient(135deg, #1a252f 0%, #2c3e50 50%, #34495e 100%)'
-    }
-};
-
-function updateBackground(weatherType, forceNight = null) {
-    const isNight = forceNight !== null ? forceNight : isNightTime(weatherType);
-    const timeOfDay = isNight ? 'night' : 'day';
-    const gradient = gradients[weatherType]?.[timeOfDay] || gradients['clear-day'].day;
-
-    document.body.style.background = `${gradient}, url('https://storage.yandexcloud.net/fotora.ru/uploads/870f953768ce9045.png') no-repeat center center fixed`;
-    document.body.style.backgroundSize = 'cover';
-    document.body.style.backgroundBlendMode = 'overlay';
-}
+// Функция updateBackground удалена - фон остается постоянным
 
 // Звезды для ночного неба
 class Star {
@@ -670,11 +582,7 @@ function startAnimation(type) {
     lightningTimer = 0;
     time = 0;
 
-    // Определяем время суток умно
-    const isNight = isNightTime(type);
-
-    // Обновляем фон с учетом реального времени суток
-    updateBackground(type);
+    // Фон остается постоянным, обновляем только атмосферные эффекты
     updateAtmosphereEffects(type);
 
     if (!weatherType) {
@@ -725,14 +633,9 @@ function startAnimation(type) {
             }
             break;
         case 'clear-day':
-            if (isNight) {
-                for (let i = 0; i < getParticleCount(50); i++) {
-                    stars.push(new Star());
-                }
-            } else {
-                for (let i = 0; i < getParticleCount(8); i++) {
-                    sunRays.push(new SunRay());
-                }
+            // Показываем солнечные лучи для ясного дня
+            for (let i = 0; i < getParticleCount(8); i++) {
+                sunRays.push(new SunRay());
             }
             break;
         case 'clear-night':
@@ -920,12 +823,16 @@ async function getWeather() {
 function updateAtmosphereEffects(type) {
     frostOverlay.style.display = 'none';
     rainReflection.style.display = 'none';
+    lightningOverlay.classList.remove('active');
     stormDarken.style.display = 'none';
     
     if (type === 'snow') {
         frostOverlay.style.display = 'block';
     } else if (type === 'rain') {
         rainReflection.style.display = 'block';
+    } else if (type === 'lightning') {
+        lightningOverlay.classList.add('active');
+        lightningOverlay.style.setProperty('--random-delay', `${Math.random() * 2}s`);
     } else if (type === 'thunderstorm') {
         stormDarken.style.display = 'block';
         setTimeout(() => { stormDarken.style.opacity = '1'; }, 100);
